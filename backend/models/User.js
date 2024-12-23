@@ -18,6 +18,12 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
+UserSchema.pre('save', function(next) {
+    console.log("UserSchema pre save")
+    // do something ...
+    next();
+});
+
 const User = mongoose.model('User', UserSchema);
 
 UserSchema.methods.toProfileJSONFor = function() {

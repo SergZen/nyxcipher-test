@@ -8,6 +8,22 @@ const jwt = require('jsonwebtoken')
 const {ROLE} = require('../config/constant')
 const JWT_KEY = "jwtactive987"
 
+const emailValidator = require("email-validator")
+const passwordValidate = require('password-validate')
+passwordValidate.minimumLength = 8
+passwordValidate.hasLowerCase = false
+passwordValidate.hasUpperCase = false
+passwordValidate.hasSymbols = false
+passwordValidate.hasNumbers = false
+
+const isEmailValid = (email) => {
+    return emailValidator.validate(email)
+}
+
+const isPasswordValid = (password) => {
+    return passwordValidate(password).is.valid()
+}
+
 // user login function
 const verifyUserLogin = async (email,password)=>{
     try {
@@ -45,6 +61,12 @@ exports.login = async (body) => {
 
 exports.register = async (header, body) => {
 	let { username, password, email } = body
+
+    if (!isEmailValid(email))
+        throw new BadRequestError('Email is not valid.')
+
+    if (!isPasswordValid(password))
+        throw new BadRequestError('Password is not valid.')
 
 	if (await User.exists({ username: username, email: email }))
         throw new BadRequestError('User already exist.')
